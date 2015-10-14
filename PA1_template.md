@@ -1,4 +1,9 @@
-# Reproducible Research: Peer Assessment 1
+---
+title: "Reproducible Research: Peer Assessment 1"
+output: 
+  html_document:
+    keep_md: true
+---
 
 
 ## Loading and preprocessing the data
@@ -34,7 +39,7 @@ daily_steps <- aggregate(steps ~ date, data = data, sum)
 hist(daily_steps$steps, breaks=10)
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-2-1.png) 
+![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2-1.png) 
 
 ```r
 summary(daily_steps$steps)
@@ -54,7 +59,7 @@ daily_activity <- aggregate(steps ~ interval, data = data, mean)
 plot(daily_activity$interval, daily_activity$steps, type="l", xlab="Intervals", ylab="Average number of steps")
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-3-1.png) 
+![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3-1.png) 
 
 We can then find the interval with the number of stpes
 
@@ -94,7 +99,7 @@ daily_steps <- aggregate(steps ~ date, data = data, sum)
 hist(daily_steps$steps, breaks=10)
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-7-1.png) 
+![plot of chunk unnamed-chunk-7](figure/unnamed-chunk-7-1.png) 
 
 ```r
 summary(daily_steps$steps)
@@ -128,3 +133,34 @@ table(data$weekday)
 ## weekday weekend 
 ##   12960    4608
 ```
+
+Next, we can tidy up the data.
+
+```r
+mean_data <- with(data, tapply(steps, list(interval, weekday), mean))
+tidy_data <- data.frame(c(1:288), mean_data[, 1], mean_data[ , 2])
+names(tidy_data) <- c("interval", "weekdayMean", "weekendMean")
+summary(tidy_data)
+```
+
+```
+##     interval       weekdayMean       weekendMean     
+##  Min.   :  1.00   Min.   :  0.000   Min.   :  0.000  
+##  1st Qu.: 72.75   1st Qu.:  2.247   1st Qu.:  1.241  
+##  Median :144.50   Median : 25.803   Median : 32.340  
+##  Mean   :144.50   Mean   : 35.611   Mean   : 42.366  
+##  3rd Qu.:216.25   3rd Qu.: 50.854   3rd Qu.: 74.654  
+##  Max.   :288.00   Max.   :230.378   Max.   :166.639
+```
+
+Then, we can plot it.
+
+```r
+par(mfcol=c(2, 1))
+plot(tidy_data$interval, tidy_data$weekdayMean, type="l", xlab="Interval", ylab="Weekday Mean")
+plot(tidy_data$interval, tidy_data$weekendMean, type="l", xlab="Interval", ylab="Weekend Mean")
+```
+
+![plot of chunk unnamed-chunk-10](figure/unnamed-chunk-10-1.png) 
+
+

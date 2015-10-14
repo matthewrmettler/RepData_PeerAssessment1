@@ -80,7 +80,19 @@ data$weekday <- as.factor(data$weekday)
 table(data$weekday)
 ```
 
-Finally, we can plot this data.
+Next, we can tidy up the data.
 ```{r}
-library(lattice)
-xyplot(steps ~ interval | weekday, type="l", data=data, layout=c(1,2))
+mean_data <- with(data, tapply(steps, list(interval, weekday), mean))
+tidy_data <- data.frame(c(1:288), mean_data[, 1], mean_data[ , 2])
+names(tidy_data) <- c("interval", "weekdayMean", "weekendMean")
+summary(tidy_data)
+```
+
+Then, we can plot it.
+```{r}
+par(mfcol=c(2, 1))
+plot(tidy_data$interval, tidy_data$weekdayMean, type="l", xlab="Interval", ylab="Weekday Mean")
+plot(tidy_data$interval, tidy_data$weekendMean, type="l", xlab="Interval", ylab="Weekend Mean")
+```
+
+
